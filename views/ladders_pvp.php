@@ -5,7 +5,7 @@
 
 include('./controllers/ladders.php');
 ?>
-<title>Dofus <?php echo $name; ?> | Honor</title>
+<title> <?php echo $name; ?> | Honor</title>
 <div id="content">
     <h1>Ranking Honor de <?php echo $name; ?></h1>
     <ul id="breadcrump">
@@ -13,7 +13,7 @@ include('./controllers/ladders.php');
         <li>Ranking Honor de <?php echo $name; ?></li>
     </ul>
     <div id="middle">
-        <h2>Los 100 jugadores con mas Honor de Dofus <?php echo $name; ?></h2>
+        <h2>Los 100 jugadores con mas Honor de <?php echo $name; ?></h2>
         <table class="ladder">
             <thead>
                 <tr>
@@ -27,24 +27,23 @@ include('./controllers/ladders.php');
                 </tr>
             </thead>
             <tbody>
-    <?php
-    $request = $game_db->query('SELECT Id,Name,Experience,Breed,Sex,PrestigeRank,AlignmentSide,Honor FROM characters WHERE Honor > 0 ORDER BY Honor DESC LIMIT 0,100');
-    $pos = 1;
-    foreach($request as $player)
-    {
-        echo '<tr>';
-        echo '<td class="c"><span class="rang">'.$pos.'</span></td>';
-        echo '<td>'.get_img_classe($player['Breed'], $player['Sex']).'</td>';
-        echo '<td>'.htmlentities($player['Name']).'</td>';
-        echo '<td><i>'.get_name_classe($player['Breed']).'</i></td>';
-        echo '<td class="c">'.get_level_by_xp(htmlentities($player['Experience'])).'</td>';
-        echo '<td class="c">'.htmlentities($player['PrestigeRank']).'</td>';
-        echo '<td class="l">'.get_rang_by_classe(htmlentities($player['AlignmentSide'])).'</td>';
-        echo '<td class="r"><b>'.$player['Honor'].'<b></td>';
-        echo '</tr>';
-        $pos++;
-    }
-    ?>
+                <?php
+                $request = $game_db->query('SELECT Id,Name,Experience,Breed,Sex,PrestigeRank,AlignmentSide,Honor FROM characters WHERE Honor > 0 ORDER BY Honor DESC LIMIT 0,100');
+                $pos = 1;
+                foreach ($request as $player) {
+                    echo '<tr>';
+                    echo '<td class="c"><span class="rang">' . $pos . '</span></td>';
+                    echo '<td>' . get_img_classe($player['Breed'], $player['Sex']) . '</td>';
+                    echo '<td>' . htmlentities($player['Name']) . '</td>';
+                    echo '<td><i>' . get_name_classe($player['Breed']) . '</i></td>';
+                    echo '<td class="c">' . get_level_by_xp(htmlentities($player['Experience'])) . '</td>';
+                    echo '<td class="c">' . htmlentities($player['PrestigeRank']) . '</td>';
+                    echo '<td class="l">' . get_rang_by_classe(htmlentities($player['AlignmentSide'])) . '</td>';
+                    echo '<td class="r"><b>' . $player['Honor'] . '<b></td>';
+                    echo '</tr>';
+                    $pos++;
+                }
+                ?>
             </tbody>
         </table>
     </div>

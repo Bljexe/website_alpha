@@ -74,8 +74,7 @@ if(isset($_POST['register_validation']))
 
             $request = $login_db->prepare('INSERT INTO accounts (Id, Login, PasswordHash, Nickname, Email, SecretQuestion,  SecretAnswer, CreationDate, Lang, UserGroupId, IsBanned, SubscriptionEnd) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)');
             $request->execute(array($row['max'] + 1,$formAccount,$formPassword,$formPseudo,$formEmail,$formQuestion,$formReponse, $date, 'pt', '1', '0', $subscriptionEnd));
-            echo '<p class="alert valid"><span class="ico_check"></span> Você se registrou com sucesso, bem-vindo ao Dofus Alpha!</p>';
+            echo '<p class="alert valid"><span class="ico_check"></span> Você se registrou com sucesso, bem-vindo ao  Alpha!</p>';
         }
     }
 }
-?>

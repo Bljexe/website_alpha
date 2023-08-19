@@ -1,7 +1,7 @@
 <?php
 
 //Nome do Servidor
-$name = 'Alpha';
+$name = 'Symp';
 
 //Numero de Noticias na Pagina
 $news = '4';
@@ -16,18 +16,17 @@ $drive = '#';
 $mediafire = '#';
 $mac = '#';
 $forum = '';
-$discord = 'https://discord.gg/2K8QugjC';
+$discord = 'https://discord.gg/DQ89Bfex';
 $twitter = '#';
-$facebook = '#';
+$facebook = 'https://www.facebook.com/sympserversuporte';
 
 
 // Jogadores Online $max
 $query = $login_db->query('SELECT CharsCount FROM worlds');
 $max_row = $query->fetch(PDO::FETCH_ASSOC);
 $max = $max_row['CharsCount'];
-$trucho = ($max + 21);
+$trucho = ($max);
 
 
 //Vote
 $pts_vote = 0;
-?>

@@ -1,0 +1,17 @@
+{
+    "name": "bryan/htdocs",
+    "autoload": {
+        "psr-4": {
+            "Bryan\\Htdocs\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Bryan Lucas",
+            "email": "bryanluka15@gmail.com"
+        }
+    ],
+    "require": {
+        "mercadopago/dx-php": "2.5.5"
+    }
+}

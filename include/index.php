@@ -1,4 +1,3 @@
 <?php
-  header('Location: https://alphaserver.com.br/');
+  header('Location: https://sympserver.com/');
   exit();
-?>

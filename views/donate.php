@@ -3,85 +3,209 @@
 # Britana CMS © 2017 - By Ragnar #
 ##################################
 ?>
-<title>Dofus <?php echo $name; ?> | Doações</title>
-<div id="content">
-<?php
-if (!isset($_SESSION['id']))
-{
-?>
-    <h1>Doar ao Servidor</h1>
-    <ul id="breadcrump">
+<title> <?php echo $name; ?> | Doações</title>
+<style>
+  #form-checkout {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+  }
+
+  .container {
+    height: 18px;
+    display: inline-block;
+    border: 1px solid rgb(118, 118, 118);
+    border-radius: 2px;
+    padding: 1px 2px;
+  }
+
+  .currency-option {
+    display: inline-block;
+    background-color: #fff;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    transition: border-color 0.3s, transform 0.3s;
+    text-align: center;
+    margin: 5px;
+    margin-bottom: 20px;
+  }
+
+  .currency-option:hover {
+    border-color: #007bff;
+    transform: scale(1.05);
+  }
+
+  .currency-option.selected {
+    border-color: #007bff;
+  }
+
+  .currency-symbol {
+    font-size: 24px;
+  }
+
+  input[type="radio"] {
+    display: none;
+  }
+</style>
+
+<body>
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
+  <script>
+    const mp = new MercadoPago('APP_USR-63ecfd3e-ab29-4922-9a8b-cfb602721425');
+    const bricksBuilder = mp.bricks();
+    const renderPaymentBrick = async (bricksBuilder) => {
+      const settings = {
+
+        initialization: {
+          /*
+            "amount" é a quantia total a pagar por todos os meios de pagamento com exceção da Conta Mercado Pago e Parcelas sem cartão de crédito, que têm seus valores de processamento determinados no backend através do "preferenceId"
+          */
+          amount: 1000,
+          preferenceId: "<PREFERENCE_ID>",
+          payer: {
+            firstName: "",
+            lastName: "",
+            email: "",
+          },
+        },
+        customization: {
+          visual: {
+            style: {
+              theme: "dark",
+            },
+          },
+          paymentMethods: {
+            creditCard: "all",
+            debitCard: "all",
+            ticket: "all",
+            bankTransfer: "all",
+            atm: "all",
+            onboarding_credits: "all",
+            wallet_purchase: "all",
+            maxInstallments: 1
+          },
+        },
+        callbacks: {
+          onReady: () => {
+            /*
+             Callback chamado quando o Brick está pronto.
+             Aqui, você pode ocultar seu site, por exemplo.
+            */
+          },
+          onSubmit: ({
+            selectedPaymentMethod,
+            formData,
+            selectedValue
+          }) => {
+            // callback chamado quando há click no botão de envio de dados
+            return new Promise((resolve, reject) => {
+              fetch("/process_payment", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(selectedPaymentMethod),
+                })
+                .then((response) => response.json())
+                .then((response) => {
+                  console.log(response)
+                  resolve();
+                })
+                .catch((error) => {
+                  // manejar a resposta de erro ao tentar criar um pagamento
+                  reject();
+                });
+            });
+          },
+          onError: (error) => {
+            // callback chamado para todos os casos de erro do Brick
+            console.error(error);
+          },
+        },
+      };
+      window.paymentBrickController = await bricksBuilder.create(
+        "payment",
+        "paymentBrick_container",
+        settings
+      );
+    };
+    renderPaymentBrick(bricksBuilder);
+
+    document.addEventListener("DOMContentLoaded", function() {
+      const currencyOptions = document.querySelectorAll('.currency-option input');
+
+      currencyOptions.forEach(option => {
+        option.addEventListener('change', (event) => {
+          const selectedValue = event.target.value;
+          console.log(`Valor selecionado: R$${selectedValue}`);
+
+          // Aqui você pode enviar o valor para o Mercado Pago ou fazer qualquer outra ação desejada.
+        });
+      });
+    });
+  </script>
+
+
+  <div id="content">
+    <?php
+    if (!isset($_SESSION['id'])) {
+    ?>
+      <h1>Doar ao Servidor</h1>
+      <ul id="breadcrump">
         <li><a href="/home">Inicio</a></li>
         <li>Doações</li>
-    </ul>
-    <div id="middle">
-    <h2>Conexão exigida</h2>
-    <p class="alert error"><span class="ico_close"></span> Es necesario que ingreses a tu cuenta primero.</p>
-    </div>
-<?php
-}
-else
-{
-?>
-    <h1>Doar para o Servidor</h1>
-    <ul id="breadcrump">
+      </ul>
+      <div id="middle">
+        <h2>Conexão exigida</h2>
+        <p class="alert error"><span class="ico_close"></span> Es necesario que ingreses a tu cuenta primero.</p>
+      </div>
+    <?php
+    } else {
+    ?>
+      <h1>Doar para o Servidor</h1>
+      <ul id="breadcrump">
         <li><a href="/home">Inicio</a></li>
         <li>Doações</li>
-    </ul>
-    <div id="middle">
-    <?php if (empty($_SESSION['LastConnection'])) { ?>
-    <h2>Pagina em Manutenção</h2>
-    <p class="alert infos"><span class="ico_info"></span> Está página está em manutenção, retornaremos em breve.</p>
-    <?php } else { ?>
-    <h2>Realiza uma doação a Dofus <?php echo $name; ?></h2>
-    <p class="alert infos"><span class="ico_info"></span> As doações permitirão que você acelere seu progresso e obtenha benefícios cosméticos, no entanto, você pode jogar livremente e progredir sem fazer doações.</p>
-    
-<center>
-    <h2 style="text-align: center;">Compre suas Ogrinas agora mesmo!</h2>
-    <br>
-<div style="width: 300px; padding: 20px; background-color: #f2f2f2; border: 1px solid #ccc; border-radius: 5px;">
-  <h3>Sua conta é: <b><?php echo ''.$_SESSION['Login'].''; ?></b></h3>
-  <p>Ao efetuar o pagamento, entre em contato com nossa <b>STAFF</b> para confirmar seu pagamento.</p>
-  <form name="pg_frm" method="post" action="https://suaurl.com/pagamento.php">
-    <input type="hidden" name="quantidade" value="2000">
-    <input type="hidden" name="preco" value="6">
-    <input type="hidden" name="usuario" value="<?php echo ''.$_SESSION['Login'].''; ?>">
-    <input type="submit" value="1000 Ogrinas por R$10.00">
-  </form>
-  <form name="pg_frm" method="post" action="https://suaurl.com/pagamento.php">
-    <input type="hidden" name="quantidade" value="2000">
-    <input type="hidden" name="preco" value="6">
-    <input type="hidden" name="usuario" value="<?php echo ''.$_SESSION['Login'].''; ?>">
-    <input type="submit" value="2000 Ogrinas por R$20.00">
-  </form>
-  <form name="pg_frm" method="post" action="https://suaurl.com/pagamento.php">
-    <input type="hidden" name="quantidade" value="2000">
-    <input type="hidden" name="preco" value="6">
-    <input type="hidden" name="usuario" value="<?php echo ''.$_SESSION['Login'].''; ?>">
-    <input type="submit" value="3000 Ogrinas por R$30.00">
-  </form>
-</div>
+      </ul>
+      <div id="middle">
+        <?php if (empty($_SESSION['LastConnection'])) { ?>
+          <h2>Pagina em Manutenção</h2>
+          <p class="alert infos"><span class="ico_info"></span> Está página está em manutenção, retornaremos em breve.</p>
+        <?php } else { ?>
+          <h2>Realiza uma doação a <?php echo $name; ?></h2>
+          <p class="alert infos"><span class="ico_info"></span> As doações permitirão que você acelere seu progresso e obtenha benefícios cosméticos, no entanto, você pode jogar livremente e progredir sem fazer doações.</p>
 
-    <!--
-
-<p><strong>Lembre-se:</strong> Tenha sua conta desconectada dentro do jogo ao efetuar o pagamento. As Ogrinas serão creditadas na conta que você inseriu: <strong><?php echo ''.$_SESSION['Login'].''; ?></strong></p>
-
-<form name="pg_frm" method="post" action="https://www.paygol.com/pay">
-<input type="hidden" name="pg_serviceid" value="478816">
-<input type="hidden" name="pg_currency" value="USD">
-<input type="hidden" name="pg_name" value="80000">
-<input type="hidden" name="pg_custom" value="<?php echo ''.$_SESSION['Login'].''; ?>">
-<input type="hidden" name="pg_price" value="200">
-<input type="hidden" name="pg_return_url" value="https://alphaserver.com.br/pago_exitoso.php">
-<input type="hidden" name="pg_cancel_url" value="https://alphaserver.com.br/pago_fallido.php">
-<input type="submit" value="160000 Ogrinas - $200.00 USD">
-</form>
-<img alt="" border="0" src="https://i.imgur.com/llQckVB.png" width="235" height="184">
--->
-</center>
-    <?php } ?>
-    </div>
-<?php
-}
-?>
-</div>
+          <center>
+            <h2 style="text-align: center;">Compre suas Ogrinas agora mesmo!</h2>
+            <br>
+            <div style="width: 700px; padding: 20px; background-color: #f2f2f2; border: 1px solid #ccc; border-radius: 5px;">
+              <div>
+                <label class="currency-option">
+                  <input type="radio" name="currency" value="10" />
+                  <span class="currency-symbol">R$</span> 10
+                </label>
+                <label class="currency-option">
+                  <input type="radio" name="currency" value="30" />
+                  <span class="currency-symbol">R$</span> 30
+                </label>
+                <label class="currency-option">
+                  <input type="radio" name="currency" value="50" />
+                  <span class="currency-symbol">R$</span> 50
+                </label>
+                <label class="currency-option">
+                  <input type="radio" name="currency" value="100" />
+                  <span class="currency-symbol">R$</span> 100
+                </label>
+              </div>
+              <div id="paymentBrick_container"></div>
+            </div>
+          </center>
+        <?php } ?>
+      </div>
+    <?php
+    }
+    ?>
+  </div>
+</body>

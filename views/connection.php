@@ -3,7 +3,7 @@
 # Britana CMS © 2017 - By Ragnar #
 ##################################
 ?>
-<title>Dofus <?php echo $name; ?> | Conexão</title>
+<title> <?php echo $name; ?> | Conexão</title>
 <div id="content">
     <h1>Conectar a Pagina</h1>
     <ul id="breadcrump">
@@ -17,12 +17,12 @@
                 <span>*</span> Nome da conta :
                 <small>Insira o nome da sua conta.</small>
             </label>
-            <input type="text" name="formuser"/>
+            <input type="text" name="formuser" />
             <label for="">
                 <span>*</span> Senha :
                 <small>Insira sua senha.</small>
             </label>
-            <input type="password" name="formpass"/>
+            <input type="password" name="formpass" />
             <button style="padding: 15px 90px!important;" name="connection" type="sumbit">Entrar</button>
         </form>
     </div>
