@@ -1,26 +1,31 @@
 <?php
 
-echo '<pre> RECEBI O ARRAY';
-print_r($_POST);
-echo '</pre>';
+$amount = $_POST['amount'];
+$methodPay = $_POST['method_pay'];
+
+echo "Em desenvolvimento";
 exit;
 
+if (empty($amount) || empty($methodPay)) {
+    header('Location: https://sympserver.com/donate');
+    exit();
+}
 
-// SDK do Mercado Pago
-require __DIR__ .  '/vendor/autoload.php';
-// Adicione as credenciais
-MercadoPago\SDK::setAccessToken('APP_USR-6834350115957158-081910-6b1eef13db76f3162cc94eed8370e32a-58757528');
+require_once 'vendor/autoload.php';
 
-$preference = new MercadoPago\Preference();
+MercadoPago\SDK::setAccessToken("APP_USR-6834350115957158-081910-6b1eef13db76f3162cc94eed8370e32a-58757528"); // Either Production or SandBox AccessToken
 
-// Cria um item na preferência
-$item = new MercadoPago\Item();
-$item->title = 'Meu produto';
-$item->quantity = 1;
-$item->unit_price = 75.56;
-$preference->items = array($item);
+$payment = new MercadoPago\Payment();
 
-// o $preference->purpose = 'wallet_purchase'; permite apenas pagamentos logados
-// para permitir pagamentos como guest, você pode omitir essa propriedade
-$preference->purpose = 'wallet_purchase';
-$preference->save();
+$payment->transaction_amount = $amount;
+$payment->token = "";
+$payment->description = "Ogrines";
+$payment->installments = 1;
+$payment->payment_method_id = $methodPay;
+$payment->payer = array(
+    "email" => ""
+);
+
+$payment->save();
+
+echo $payment->status;
